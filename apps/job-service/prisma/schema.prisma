@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  title       String
+  company     String
+  location    String?
+  // status      String   @default("applied")
+  appliedAt   DateTime @default(now()) @map("applied_at")
+  url         String?
+  notes       String?
+  userId      String   @map("user_id")
+  jobStatuses JobStatus[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("jobs")
+}
+
+model JobStatus {
+  id String @id @default(uuid())
+  jobId String @map("job_id")
+  statusId String @map("status_id")
+  job Job @relation(fields: [jobId], references: [id])
+  status Status @relation(fields: [statusId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("job_statuses")
+}
+
+model Status {
+  id String @id
+  sequence Int @default(0)
+  jobStatuses JobStatus[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("statuses")
+}

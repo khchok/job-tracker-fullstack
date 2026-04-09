@@ -1,0 +1,25 @@
+{
+  "name": "job-tracker-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:job-service": "pnpm --filter job-service dev",
+    "dev:user-service": "pnpm --filter user-service dev",
+    "start:job-service": "pnpm --filter shared-types build && pnpm --filter job-service start",
+    "start:user-service": "pnpm --filter shared-types build && pnpm --filter user-service start",
+    "dev:frontend": "pnpm --filter job-tracker-web dev",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d",
+    "db:migrate": "pnpm --filter user-service db:migrate && pnpm --filter job-service db:migrate",
+    "db:generate": "pnpm --filter user-service db:generate && pnpm --filter job-service db:generate",
+    "db:push": "pnpm --filter user-service db:push && pnpm --filter job-service db:push",
+    "db:setup": "pnpm db:up && sleep 2 && pnpm db:push && pnpm db:generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1"
+}
