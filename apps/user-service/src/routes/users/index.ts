@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { FastifyInstance } from "fastify";
 import * as userService from "../../services/user.service";
 
@@ -33,14 +34,40 @@ export default async function (fastify: FastifyInstance) {
       const user = await userService.signIn(email, password);
       if (!user) return reply.code(401).send({ error: "Invalid credentials" });
 
-      const token = fastify.jwt.sign({ id: user.id, email: user.email });
+      const jti = randomUUID();
+      const token = fastify.jwt.sign({ id: user.id, email: user.email, jti });
       reply.setCookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         path: "/",
-        sameSite: "none",
+        sameSite: "lax",
       });
       return reply.status(200).send({ message: "Login successful" });
     },
   );
+
+  fastify.post("/auth/logout", async (request, reply) => {
+    const rawToken = request.cookies["token"];
+    if (rawToken) {
+      try {
+        const payload = fastify.jwt.decode<{ jti?: string; exp?: number }>(rawToken);
+        if (payload?.jti) {
+          const expiresAt = payload.exp
+            ? new Date(payload.exp * 1000)
+            : new Date(Date.now() + 24 * 60 * 60 * 1000); // fallback: 24h
+
+          await fastify.prisma.revokedToken.upsert({
+            where: { jti: payload.jti },
+            update: {},
+            create: { jti: payload.jti, expiresAt },
+          });
+        }
+      } catch {
+        // Malformed token — still clear the cookie
+      }
+    }
+
+    reply.clearCookie("token", { path: "/" });
+    return reply.status(200).send({ message: "Logged out" });
+  });
 }
