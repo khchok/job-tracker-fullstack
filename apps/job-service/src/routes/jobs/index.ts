@@ -7,16 +7,36 @@ const JOB_STATUSES = Object.values(JobStatus);
 const jobSchema = {
   type: "object",
   properties: {
-    id: { type: "number" },
+    id: { type: "string" },
     name: { type: "string" },
     status: { type: "string", enum: JOB_STATUSES },
     remarks: { type: "string" },
   },
 };
 
+const jobDetailSchema = {
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    name: { type: "string" },
+    remarks: { type: "string" },
+    statuses: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          status: { type: "string", enum: JOB_STATUSES },
+          createdAt: { type: "string" },
+        },
+      },
+    },
+  },
+};
+
 export default async function (fastify: FastifyInstance) {
-  fastify.get("/health", async (_request, reply) => {
-    return reply.status(200).send({ message: "OK" });
+  fastify.get("/ping", async (_request, reply) => {
+    return {message: "pong"};
   });
 
   fastify.get(
@@ -41,18 +61,18 @@ export default async function (fastify: FastifyInstance) {
         tags: ["Jobs"],
         params: {
           type: "object",
-          properties: { id: { type: "number" } },
+          properties: { id: { type: "string" } },
           required: ["id"],
         },
         response: {
-          200: jobSchema,
+          200: jobDetailSchema,
           404: { type: "object", properties: { error: { type: "string" } } },
         },
       },
     },
     async (request, reply) => {
-      const { id } = request.params as { id: number };
-      const job = jobService.getById(id);
+      const { id } = request.params as { id: string };
+      const job = await jobService.getById(id);
       if (!job) return reply.status(404).send({ error: "Job not found" });
       return job;
     },
@@ -80,7 +100,7 @@ export default async function (fastify: FastifyInstance) {
         name: string;
         remarks?: string;
       };
-      const job = jobService.createJob(name, remarks);
+      const job = await jobService.createJob(name, remarks);
       return reply.status(201).send(job);
     },
   );
@@ -93,7 +113,7 @@ export default async function (fastify: FastifyInstance) {
         tags: ["Jobs"],
         params: {
           type: "object",
-          properties: { id: { type: "number" } },
+          properties: { id: { type: "string" } },
           required: ["id"],
         },
         body: {
@@ -111,11 +131,9 @@ export default async function (fastify: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { id } = request.params as { id: number };
-      const data = request.body as Partial<
-        Pick<Job, "name" | "status" | "remarks">
-      >;
-      const job = jobService.updateJob(id, data);
+      const { id } = request.params as { id: string };
+      const data = request.body as Partial<Pick<Job, "name" | "status" | "remarks">>;
+      const job = await jobService.updateJob(id, data);
       if (!job) return reply.status(404).send({ error: "Job not found" });
       return job;
     },
@@ -129,7 +147,7 @@ export default async function (fastify: FastifyInstance) {
         tags: ["Jobs"],
         params: {
           type: "object",
-          properties: { id: { type: "number" } },
+          properties: { id: { type: "string" } },
           required: ["id"],
         },
         response: {
@@ -139,8 +157,8 @@ export default async function (fastify: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { id } = request.params as { id: number };
-      const deleted = jobService.deleteJob(id);
+      const { id } = request.params as { id: string };
+      const deleted = await jobService.deleteJob(id);
       if (!deleted) return reply.status(404).send({ error: "Job not found" });
       return reply.status(204).send();
     },

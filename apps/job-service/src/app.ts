@@ -1,4 +1,5 @@
 import AutoLoad from "@fastify/autoload";
+import cookie from "@fastify/cookie";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import {
@@ -49,6 +50,8 @@ export default async function app(
       deepLinking: false,
     },
   });
+
+  await fastify.register(cookie);
 
   // Automatically load all plugins from the plugins/ folder
   await fastify.register(AutoLoad, {

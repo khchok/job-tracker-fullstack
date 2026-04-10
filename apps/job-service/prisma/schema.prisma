@@ -11,6 +11,7 @@ model Job {
   id          String   @id @default(uuid())
   title       String
   company     String
+  department  String?
   location    String?
   // status      String   @default("applied")
   appliedAt   DateTime @default(now()) @map("applied_at")
