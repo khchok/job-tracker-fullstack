@@ -1,5 +1,6 @@
-import KanbanBoard from "@/components/kanban/KanbanBoard";
+import SignOutButton from "@/components/auth/SignOutButton";
 import AddJobModal from "@/components/jobs/AddJobModal";
+import KanbanBoard from "@/components/kanban/KanbanBoard";
 
 export default function Home() {
   return (
@@ -10,7 +11,10 @@ export default function Home() {
             <h1 className="text-2xl font-bold text-gray-900">Job Tracker</h1>
             <p className="text-sm text-gray-500 mt-1">Track your job applications</p>
           </div>
-          <AddJobModal />
+          <div className="flex items-center gap-3">
+            <AddJobModal />
+            <SignOutButton />
+          </div>
         </div>
         <KanbanBoard />
       </div>
