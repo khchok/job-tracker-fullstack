@@ -1,9 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Job } from "shared-types";
-import { updateJob } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +8,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUpdateJobMutation } from "@/services/job-service/mutations";
+import { useState } from "react";
+import { Job } from "shared-types";
+import { toast } from "sonner";
 
 interface EditJobModalProps {
   job: Job | null;
@@ -20,26 +19,19 @@ interface EditJobModalProps {
 }
 
 export default function EditJobModal({ job, onClose }: EditJobModalProps) {
-  const [name, setName] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const queryClient = useQueryClient();
+  const [name, setName] = useState(job?.name ?? "");
+  const [remarks, setRemarks] = useState(job?.remarks ?? "");
 
-  useEffect(() => {
-    if (job) {
-      setName(job.name);
-      setRemarks(job.remarks);
-    }
-  }, [job]);
+  const { updateJobMutation, isPending } = useUpdateJobMutation();
 
-  const mutation = useMutation({
-    mutationFn: () => updateJob(job!.id, { name, remarks }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-      toast.success("Job updated");
-      onClose();
-    },
-    onError: () => toast.error("Failed to update job"),
-  });
+  function handleSubmit() {
+    updateJobMutation({ id: job!.id, data: { name, remarks } })
+      .then(() => {
+        toast.success("Job updated");
+        onClose();
+      })
+      .catch(() => toast.error("Failed to update job"));
+  }
 
   return (
     <Dialog open={!!job} onOpenChange={(open) => !open && onClose()}>
@@ -69,10 +61,10 @@ export default function EditJobModal({ job, onClose }: EditJobModalProps) {
               Cancel
             </Button>
             <Button
-              onClick={() => mutation.mutate()}
-              disabled={!name.trim() || mutation.isPending}
+              onClick={handleSubmit}
+              disabled={!name.trim() || isPending}
             >
-              {mutation.isPending ? "Saving..." : "Save Changes"}
+              {isPending ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>

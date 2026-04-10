@@ -9,8 +9,9 @@ interface KanbanColumnProps {
   label: string;
   jobs: Job[];
   isLoading: boolean;
+  onView: (id: string) => void;
   onEdit: (job: Job) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function KanbanColumn({
@@ -18,6 +19,7 @@ export default function KanbanColumn({
   label,
   jobs,
   isLoading,
+  onView,
   onEdit,
   onDelete,
 }: KanbanColumnProps) {
@@ -46,7 +48,7 @@ export default function KanbanColumn({
           </>
         ) : (
           jobs.map((job) => (
-            <JobCard key={job.id} job={job} onEdit={onEdit} onDelete={onDelete} />
+            <JobCard key={job.id} job={job} onView={onView} onEdit={onEdit} onDelete={onDelete} />
           ))
         )}
       </div>

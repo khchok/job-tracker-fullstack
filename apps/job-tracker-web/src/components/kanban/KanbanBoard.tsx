@@ -1,5 +1,8 @@
 "use client";
-import { useState } from "react";
+import { COLUMNS } from "@/lib/constants";
+import { useDeleteJobMutation } from "@/services/job-service/mutations";
+import { useGetJobsQuery } from "@/services/job-service/queries";
+import { useUpdateJobMutation } from "@/services/job-service/mutations";
 import {
   DndContext,
   DragEndEvent,
@@ -7,40 +10,22 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Job, JobStatus } from "shared-types";
-import { getJobs, updateJob, deleteJob } from "@/lib/api";
-import { COLUMNS } from "@/lib/constants";
-import KanbanColumn from "./KanbanColumn";
+import { toast } from "sonner";
 import EditJobModal from "../jobs/EditJobModal";
+import JobDetailModal from "../jobs/JobDetailModal";
+import KanbanColumn from "./KanbanColumn";
 
 export default function KanbanBoard() {
   const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [viewingJobId, setViewingJobId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: jobs = [], isLoading } = useQuery({
-    queryKey: ["jobs"],
-    queryFn: getJobs,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: JobStatus }) =>
-      updateJob(id, { status }),
-    onError: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-      toast.error("Failed to move job");
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteJob,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-      toast.success("Job deleted");
-    },
-    onError: () => toast.error("Failed to delete job"),
-  });
+  const { data: jobs = [], isLoading } = useGetJobsQuery();
+  const { updateJobMutation } = useUpdateJobMutation();
+  const { deleteJobMutation } = useDeleteJobMutation();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -50,7 +35,7 @@ export default function KanbanBoard() {
     const { active, over } = event;
     if (!over) return;
 
-    const jobId = active.id as number;
+    const jobId = active.id as string;
     const newStatus = over.id as JobStatus;
     const job = jobs.find((j) => j.id === jobId);
     if (!job || job.status === newStatus) return;
@@ -60,7 +45,16 @@ export default function KanbanBoard() {
       old.map((j) => (j.id === jobId ? { ...j, status: newStatus } : j))
     );
 
-    updateMutation.mutate({ id: jobId, status: newStatus });
+    updateJobMutation({ id: jobId, data: { status: newStatus } }).catch(() => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      toast.error("Failed to move job");
+    });
+  }
+
+  function handleDelete(id: string) {
+    deleteJobMutation(id)
+      .then(() => toast.success("Job deleted"))
+      .catch(() => toast.error("Failed to delete job"));
   }
 
   return (
@@ -74,13 +68,22 @@ export default function KanbanBoard() {
               label={col.label}
               jobs={jobs.filter((j) => j.status === col.id)}
               isLoading={isLoading}
+              onView={setViewingJobId}
               onEdit={setEditingJob}
-              onDelete={(id) => deleteMutation.mutate(id)}
+              onDelete={handleDelete}
             />
           ))}
         </div>
       </DndContext>
-      <EditJobModal job={editingJob} onClose={() => setEditingJob(null)} />
+      {editingJob && (
+        <EditJobModal job={editingJob} onClose={() => setEditingJob(null)} />
+      )}
+      {viewingJobId && (
+        <JobDetailModal
+          jobId={viewingJobId}
+          onClose={() => setViewingJobId(null)}
+        />
+      )}
     </>
   );
 }

@@ -7,8 +7,21 @@ export enum JobStatus {
 }
 
 export interface Job {
-  id: number;
+  id: string;
   name: string;
   status: JobStatus;
   remarks: string;
+}
+
+export interface JobStatusEntry {
+  id: string;
+  status: JobStatus;
+  createdAt: string;
+}
+
+export interface JobDetail {
+  id: string;
+  name: string;
+  remarks: string;
+  statuses: JobStatusEntry[];
 }

@@ -1,8 +1,4 @@
 "use client";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { createJob } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,24 +9,27 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCreateJobMutation } from "@/services/job-service/mutations";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function AddJobModal() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [remarks, setRemarks] = useState("");
-  const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: () => createJob({ name, remarks }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-      toast.success("Job added");
-      setOpen(false);
-      setName("");
-      setRemarks("");
-    },
-    onError: () => toast.error("Failed to add job"),
-  });
+  const { createJobMutation, isPending } = useCreateJobMutation();
+
+  function handleSubmit() {
+    createJobMutation({ name, remarks })
+      .then(() => {
+        toast.success("Job added");
+        setOpen(false);
+        setName("");
+        setRemarks("");
+      })
+      .catch(() => toast.error("Failed to add job"));
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -63,10 +62,10 @@ export default function AddJobModal() {
               Cancel
             </Button>
             <Button
-              onClick={() => mutation.mutate()}
-              disabled={!name.trim() || mutation.isPending}
+              onClick={handleSubmit}
+              disabled={!name.trim() || isPending}
             >
-              {mutation.isPending ? "Adding..." : "Add Job"}
+              {isPending ? "Adding..." : "Add Job"}
             </Button>
           </div>
         </div>
