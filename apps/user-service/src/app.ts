@@ -1,4 +1,5 @@
 import AutoLoad from "@fastify/autoload";
+import cookie from "@fastify/cookie";
 import jwt from "@fastify/jwt";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
@@ -53,7 +54,13 @@ export default async function app(
 
   await fastify.register(jwt, {
     secret: process.env.JWT_PUBLIC_KEY!,
+    cookie: {
+      cookieName: "token",
+      signed: false,
+    },
   });
+
+  await fastify.register(cookie);
 
   // Automatically load all plugins from the plugins/ folder
   await fastify.register(AutoLoad, {

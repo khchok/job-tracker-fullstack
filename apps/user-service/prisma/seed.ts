@@ -1,10 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcrypt";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter: pool });
 
-const userData: Prisma.UserCreateInput[] = [
+const userData: Pick<Prisma.UserCreateInput, "name" | "email">[] = [
   {
     name: "Alice",
     email: "alice@job-tracker.com",
@@ -26,8 +27,9 @@ async function main() {
   await prisma.user.deleteMany();
 
   for (const u of userData) {
+    const pwHash = await bcrypt.hash("password", 10);
     const user = await prisma.user.create({
-      data: u,
+      data: { ...u, passwordHash: pwHash },
     });
     console.log(`Created user with id: ${user.id}`);
   }
