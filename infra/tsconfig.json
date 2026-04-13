@@ -10,6 +10,6 @@
     "declaration": true,
     "outDir": "./dist"
   },
-  "include": ["bin/**/*", "lib/**/*"],
+  "include": ["src/**/*", "lib/**/*"],
   "exclude": ["node_modules", "dist", "cdk.out"]
 }
