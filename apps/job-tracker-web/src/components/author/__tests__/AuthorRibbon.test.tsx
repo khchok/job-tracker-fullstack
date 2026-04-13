@@ -35,12 +35,33 @@ describe("AuthorRibbon", () => {
 
     // Modal content not visible before click
     expect(screen.queryByText("Chok Khar Hui")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /about the author/i })).toHaveAttribute("aria-expanded", "false");
 
     await user.click(screen.getByRole("button", { name: /about the author/i }));
 
     // Modal content visible after click
     expect(screen.getByText("Chok Khar Hui")).toBeInTheDocument();
     expect(screen.getByText("Software Engineer")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /about the author/i })).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("closes the modal when the pill is clicked again", async () => {
+    const user = userEvent.setup();
+    render(<AuthorRibbon />);
+    const button = screen.getByRole("button", { name: /about the author/i });
+
+    // Initially closed
+    expect(button).toHaveAttribute("aria-expanded", "false");
+
+    // Open
+    await user.click(button);
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Chok Khar Hui")).toBeInTheDocument();
+
+    // Close
+    await user.click(button);
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Chok Khar Hui")).not.toBeInTheDocument();
   });
 
   it("modal contains all contact links", async () => {
@@ -48,19 +69,19 @@ describe("AuthorRibbon", () => {
     render(<AuthorRibbon />);
     await user.click(screen.getByRole("button", { name: /about the author/i }));
 
-    expect(screen.getByRole("link", { name: /github/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /github\.com\/khchok/i })).toHaveAttribute(
       "href",
       "https://github.com/khchok"
     );
-    expect(screen.getByRole("link", { name: /linkedin/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /linkedin profile/i })).toHaveAttribute(
       "href",
       "https://www.linkedin.com/in/khar-hui-chok-96a852203"
     );
-    expect(screen.getByRole("link", { name: /email/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /chok072056@gmail\.com/i })).toHaveAttribute(
       "href",
       "mailto:chok072056@gmail.com"
     );
-    expect(screen.getByRole("link", { name: /whatsapp/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /\+60 18-258 6282/i })).toHaveAttribute(
       "href",
       "https://wa.me/60182586282"
     );
