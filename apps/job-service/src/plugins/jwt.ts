@@ -1,6 +1,8 @@
 import jwt from "@fastify/jwt";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import { JwtPayload } from "shared-types";
+import { validateSession } from "../lib/session-validator";
 
 async function jwtPlugin(fastify: FastifyInstance) {
   await fastify.register(jwt, {
@@ -17,7 +19,27 @@ async function jwtPlugin(fastify: FastifyInstance) {
       try {
         await request.jwtVerify();
       } catch (err) {
-        reply.send(err);
+        return reply.send(err);
+      }
+
+      const token = (request as any).cookies["token"] as string | undefined;
+      const payload = token
+        ? fastify.jwt.decode<JwtPayload>(token)
+        : null;
+
+      if (!payload?.jti) {
+        return reply.status(401).send({ error: "Invalid token" });
+      }
+
+      try {
+        const valid = await validateSession(payload.jti);
+        if (!valid) {
+          return reply.status(401).send({ error: "Invalid session" });
+        }
+      } catch {
+        return reply
+          .status(503)
+          .send({ error: "Authentication service unavailable" });
       }
     },
   );
