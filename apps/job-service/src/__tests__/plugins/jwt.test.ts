@@ -102,4 +102,15 @@ describe("authenticate decorator", () => {
     });
     expect(mockValidateSession).toHaveBeenCalledWith("session-1");
   });
+
+  it("returns 401 when token is valid but missing jti claim", async () => {
+    const tokenWithoutJti = app.jwt.sign({ id: "user-1", email: "test@example.com" });
+    const res = await app.inject({
+      method: "GET",
+      url: "/protected",
+      cookies: { token: tokenWithoutJti },
+    });
+    expect(res.statusCode).toBe(401);
+    expect(JSON.parse(res.body)).toEqual({ error: "Invalid token" });
+  });
 });

@@ -22,11 +22,7 @@ async function jwtPlugin(fastify: FastifyInstance) {
         return reply.send(err);
       }
 
-      const token = (request as any).cookies["token"] as string | undefined;
-      const payload = token
-        ? fastify.jwt.decode<JwtPayload>(token)
-        : null;
-
+      const payload = request.user as JwtPayload;
       if (!payload?.jti) {
         return reply.status(401).send({ error: "Invalid token" });
       }
