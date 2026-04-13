@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "tsx watch src/server.ts",
     "start": "tsc && node dist/server.js",
     "db:generate": "prisma generate",
@@ -33,8 +33,11 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^25.5.2",
+    "jest": "^29.7.0",
     "prisma": "^7.7.0",
+    "ts-jest": "^29.4.9",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   }
