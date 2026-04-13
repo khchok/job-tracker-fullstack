@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
+import AuthorRibbon from "@/components/author/AuthorRibbon";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           {children}
           <Toaster richColors />
+          <AuthorRibbon />
         </Providers>
       </body>
     </html>
