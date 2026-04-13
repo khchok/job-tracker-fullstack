@@ -1,6 +1,7 @@
 packages:
- - 'apps/*'
- - 'libraries/*'
+  - 'apps/*'
+  - 'libraries/*'
+  - 'infra'
 
 ignoredBuiltDependencies:
   - sharp
