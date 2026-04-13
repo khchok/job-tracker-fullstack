@@ -10,9 +10,10 @@ export default function AuthorRibbon() {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen((v) => !v)}
         aria-label="About the author"
-        className="fixed top-1/2 right-0 -translate-y-1/2 z-40 flex items-center gap-2 bg-blue-700 text-white pl-3 pr-3 py-2.5 rounded-l-full shadow-lg hover:bg-blue-800 transition-colors cursor-pointer"
+        aria-expanded={open}
+        className="fixed top-1/2 right-0 -translate-y-1/2 z-40 flex items-center gap-2 bg-blue-700 text-white px-3 py-2.5 rounded-l-full shadow-lg hover:bg-blue-800 transition-colors cursor-pointer"
       >
         <div className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/40 shrink-0">
           <Image
