@@ -14,7 +14,7 @@ export const options: FastifyServerOptions = {
   logger: {
     level: process.env.LOG_LEVEL || "debug",
     transport:
-      process.env.LOG_LEVEL === "debug"
+      process.env.NODE_ENV !== "production"
         ? {
             target: "pino-pretty",
             options: {

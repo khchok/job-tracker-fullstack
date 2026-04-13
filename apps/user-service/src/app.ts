@@ -14,7 +14,7 @@ export const options: FastifyServerOptions = {
   logger: {
     level: process.env.LOG_LEVEL || "debug",
     transport:
-      process.env.LOG_LEVEL === "debug"
+      process.env.NODE_ENV !== "production"
         ? {
             target: "pino-pretty",
             options: {
@@ -35,7 +35,7 @@ export default async function app(
   await fastify.register(swagger, {
     openapi: {
       info: {
-        title: "Jobs API",
+        title: "Users API",
         description: "Testing the Fastify swagger API",
         version: "1.0.0",
       },
