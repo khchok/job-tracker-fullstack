@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "crypto";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import * as sessionRepository from "../../repositories/session.repository";
 
@@ -6,7 +7,16 @@ export default async function internalRoutes(fastify: FastifyInstance) {
     "preHandler",
     async (request: FastifyRequest, reply: FastifyReply) => {
       const secret = request.headers["x-internal-secret"];
-      if (!secret || secret !== process.env.INTERNAL_SERVICE_SECRET) {
+      const expected = process.env.INTERNAL_SERVICE_SECRET;
+      let authorized = false;
+      if (secret && expected) {
+        const secretBuf = Buffer.from(secret as string);
+        const expectedBuf = Buffer.from(expected);
+        if (secretBuf.length === expectedBuf.length) {
+          authorized = timingSafeEqual(secretBuf, expectedBuf);
+        }
+      }
+      if (!authorized) {
         return reply.status(401).send({ error: "Unauthorized" });
       }
     },

@@ -59,6 +59,7 @@ describe("GET /internal/sessions/:jti", () => {
       headers: { "x-internal-secret": "test-secret" },
     });
     expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ id: "jti-1" });
     await app.close();
   });
 
