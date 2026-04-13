@@ -5,7 +5,7 @@
       "rootDir": "./src",
       "tsBuildInfoFile": "./dist/.tsbuildinfo",
       "composite": true,
-    "types": ["node", "jest"]
+      "types": ["node", "jest"]
     },
     "include": ["src/**/*", "global-types.d.ts"],
     "exclude": ["node_modules", "dist"]

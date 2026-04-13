@@ -65,4 +65,18 @@ describe("validateSession", () => {
     await validateSession("any-jti");
     expect(global.fetch).toHaveBeenCalled();
   });
+
+  it("throws with a descriptive message when user-service returns an unexpected status", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ status: 500 }) as any;
+    await expect(validateSession("any-jti")).rejects.toThrow(
+      "Unexpected response from user-service: 500 (jti: any-jti)",
+    );
+  });
+
+  it("throws when required env vars are missing", async () => {
+    delete process.env.INTERNAL_SERVICE_SECRET;
+    await expect(validateSession("any-jti")).rejects.toThrow(
+      "Missing required env vars",
+    );
+  });
 });

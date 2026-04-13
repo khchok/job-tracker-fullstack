@@ -6,10 +6,22 @@ export async function validateSession(jti: string): Promise<boolean> {
     return true;
   }
 
-  const url = `${process.env.USER_SERVICE_URL}/internal/sessions/${jti}`;
+  const secret = process.env.INTERNAL_SERVICE_SECRET;
+  const baseUrl = process.env.USER_SERVICE_URL;
+  if (!secret || !baseUrl) {
+    throw new Error(
+      "Missing required env vars: USER_SERVICE_URL or INTERNAL_SERVICE_SECRET",
+    );
+  }
+
+  if (!jti || !/^[\w-]+$/.test(jti)) {
+    throw new Error(`Invalid jti format: ${jti}`);
+  }
+
+  const url = `${baseUrl}/internal/sessions/${jti}`;
   const response = await fetch(url, {
     headers: {
-      "x-internal-secret": process.env.INTERNAL_SERVICE_SECRET!,
+      "x-internal-secret": secret,
     },
     signal: AbortSignal.timeout(3000),
   });
@@ -17,5 +29,7 @@ export async function validateSession(jti: string): Promise<boolean> {
   if (response.status === 200) return true;
   if (response.status === 404) return false;
 
-  throw new Error(`Unexpected response from user-service: ${response.status}`);
+  throw new Error(
+    `Unexpected response from user-service: ${response.status} (jti: ${jti})`,
+  );
 }
