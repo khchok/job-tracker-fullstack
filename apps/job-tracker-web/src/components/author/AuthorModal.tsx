@@ -4,6 +4,7 @@ import Image from "next/image";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 interface AuthorModalProps {
@@ -18,6 +19,7 @@ export default function AuthorModal({ open, onOpenChange }: AuthorModalProps) {
         showCloseButton
         className="p-0 overflow-hidden gap-0 max-w-sm sm:max-w-md"
       >
+        <DialogTitle className="sr-only">About the Author</DialogTitle>
         <div className="flex">
           {/* Left accent panel */}
           <div className="bg-blue-700 px-5 py-6 flex flex-col items-center justify-center gap-3 min-w-[100px]">
