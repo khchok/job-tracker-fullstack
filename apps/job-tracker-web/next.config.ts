@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["shared-types"],
+  // images: { unoptimized: true },
   async rewrites() {
     return [
       {

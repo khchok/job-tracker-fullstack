@@ -1,6 +1,5 @@
 import AutoLoad from "@fastify/autoload";
 import cookie from "@fastify/cookie";
-import jwt from "@fastify/jwt";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import {
@@ -49,14 +48,6 @@ export default async function app(
     uiConfig: {
       docExpansion: "full",
       deepLinking: false,
-    },
-  });
-
-  await fastify.register(jwt, {
-    secret: process.env.JWT_PUBLIC_KEY!,
-    cookie: {
-      cookieName: "token",
-      signed: false,
     },
   });
 

@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 
 interface AuthorModalProps {
   open: boolean;

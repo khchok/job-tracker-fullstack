@@ -1,5 +1,5 @@
-import { randomUUID } from "crypto";
 import { FastifyInstance } from "fastify";
+import * as sessionService from "../../services/session.service";
 import * as userService from "../../services/user.service";
 
 export default async function (fastify: FastifyInstance) {
@@ -31,10 +31,13 @@ export default async function (fastify: FastifyInstance) {
         password: string;
       };
 
-      const user = await userService.signIn(email, password);
-      if (!user) return reply.code(401).send({ error: "Invalid credentials" });
+      const userSessionResult = await userService.signIn(email, password);
+      if (!userSessionResult)
+        return reply.code(401).send({ error: "Invalid credentials" });
 
-      const jti = randomUUID();
+      const { user, session } = userSessionResult;
+
+      const jti = session.id;
       const token = fastify.jwt.sign({ id: user.id, email: user.email, jti });
       reply.setCookie("token", token, {
         httpOnly: true,
@@ -50,17 +53,11 @@ export default async function (fastify: FastifyInstance) {
     const rawToken = request.cookies["token"];
     if (rawToken) {
       try {
-        const payload = fastify.jwt.decode<{ jti?: string; exp?: number }>(rawToken);
+        const payload = fastify.jwt.decode<{ jti?: string }>(rawToken);
         if (payload?.jti) {
-          const expiresAt = payload.exp
-            ? new Date(payload.exp * 1000)
-            : new Date(Date.now() + 24 * 60 * 60 * 1000); // fallback: 24h
+          const expiresAt = new Date(Date.now()); // fallback: 24h
 
-          await fastify.prisma.revokedToken.upsert({
-            where: { jti: payload.jti },
-            update: {},
-            create: { jti: payload.jti, expiresAt },
-          });
+          await sessionService.updateExpiresAt(payload.jti, expiresAt);
         }
       } catch {
         // Malformed token — still clear the cookie
@@ -70,4 +67,26 @@ export default async function (fastify: FastifyInstance) {
     reply.clearCookie("token", { path: "/" });
     return reply.status(200).send({ message: "Logged out" });
   });
+
+  fastify.get(
+    "/auth/me",
+    {
+      // @ts-ignore
+      onRequest: [fastify.authenticate],
+    },
+    async (request, reply) => {
+      const rawToken = request.cookies["token"];
+      if (!rawToken) {
+        return reply.code(401).send({ error: "Unauthorized" });
+      }
+      const payload = fastify.jwt.decode<{ id?: string; email?: string }>(
+        rawToken,
+      );
+      if (!payload?.id) {
+        return reply.code(401).send({ error: "Unauthorized" });
+      }
+
+      return payload;
+    },
+  );
 }
