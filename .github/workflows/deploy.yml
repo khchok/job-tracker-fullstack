@@ -43,8 +43,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy CDK stack
-        working-directory: infra
-        run: pnpm deploy
+        run: pnpm --filter infra deploy
         env:
           JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
           INTERNAL_SERVICE_SECRET: ${{ secrets.INTERNAL_SERVICE_SECRET }}
