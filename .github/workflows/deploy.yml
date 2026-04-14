@@ -59,3 +59,4 @@ jobs:
           INTERNAL_SERVICE_SECRET: ${{ secrets.INTERNAL_SERVICE_SECRET }}
           USER_SERVICE_DATABASE_URL: ${{ secrets.USER_SERVICE_DATABASE_URL }}
           JOB_SERVICE_DATABASE_URL: ${{ secrets.JOB_SERVICE_DATABASE_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
