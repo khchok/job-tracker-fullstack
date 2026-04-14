@@ -4,6 +4,22 @@ import { Job, JobStatus } from "shared-types";
 import { Skeleton } from "@/components/ui/skeleton";
 import JobCard from "./JobCard";
 
+function JobCardSkeleton() {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+      <Skeleton className="h-4 w-3/4 rounded" />
+      <Skeleton className="h-3 w-full mt-2 rounded" />
+      <Skeleton className="h-3 w-2/3 mt-1 rounded" />
+      <Skeleton className="h-5 w-16 mt-2 rounded-full" />
+      <div className="flex gap-1 justify-end mt-2">
+        <Skeleton className="h-6 w-6 rounded" />
+        <Skeleton className="h-6 w-6 rounded" />
+        <Skeleton className="h-6 w-6 rounded" />
+      </div>
+    </div>
+  );
+}
+
 interface KanbanColumnProps {
   id: JobStatus;
   label: string;
@@ -43,8 +59,9 @@ export default function KanbanColumn({
       >
         {isLoading ? (
           <>
-            <Skeleton className="h-20 w-full rounded-lg" />
-            <Skeleton className="h-16 w-full rounded-lg" />
+            <JobCardSkeleton />
+            <JobCardSkeleton />
+            <JobCardSkeleton />
           </>
         ) : (
           jobs.map((job) => (
