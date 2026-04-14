@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 export async function validateSession(jti: string): Promise<boolean> {
   if (
     process.env.SKIP_SESSION_VALIDATION === "true" &&
@@ -19,11 +20,13 @@ export async function validateSession(jti: string): Promise<boolean> {
   }
 
   const url = `${baseUrl.replace(/\/$/, "")}/internal/sessions/${jti}`;
+  Sentry.logger.info(`Validating session for jti: ${jti}`, { url });
+  
   const response = await fetch(url, {
     headers: {
       "x-internal-secret": secret,
     },
-    signal: AbortSignal.timeout(3000),
+    // signal: AbortSignal.timeout(3000),
   });
 
   if (response.status === 200) return true;
