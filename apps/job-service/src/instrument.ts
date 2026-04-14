@@ -1,7 +1,7 @@
-import sentry from "@sentry/node";
+import * as Sentry from "@sentry/node";
 
 export function instrument() {
-  sentry.init({
+  Sentry.init({
     dsn: process.env.SENTRY_DSN,
     enableLogs: true,
     sendDefaultPii: true,
