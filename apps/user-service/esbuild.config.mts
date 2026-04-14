@@ -1,5 +1,8 @@
 // apps/user-service/esbuild.config.mts
 import { build } from "esbuild";
+import { cpSync } from "fs";
+import { createRequire } from "module";
+import { dirname, resolve } from "path";
 
 await build({
   entryPoints: ["src/lambda.ts"],
@@ -33,3 +36,9 @@ await build({
     },
   ],
 });
+
+// @fastify/swagger-ui reads logo.svg from __dirname/static/ at runtime.
+// In a Lambda bundle __dirname resolves to /var/task, so copy the static assets into dist/.
+const req = createRequire(import.meta.url);
+const swaggerUiDir = dirname(req.resolve("@fastify/swagger-ui"));
+cpSync(resolve(swaggerUiDir, "static"), resolve("dist/static"), { recursive: true });
