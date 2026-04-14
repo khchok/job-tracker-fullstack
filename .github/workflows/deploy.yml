@@ -32,12 +32,16 @@ jobs:
 
       - name: Generate Prisma client (user-service)
         run: pnpm --filter user-service db:generate
+        env:
+          USER_SERVICE_DATABASE_URL: ${{ secrets.USER_SERVICE_DATABASE_URL }}
 
       - name: Build user-service Lambda
         run: pnpm --filter user-service build:lambda
 
       - name: Generate Prisma client (job-service)
         run: pnpm --filter job-service db:generate
+        env:
+          JOB_SERVICE_DATABASE_URL: ${{ secrets.JOB_SERVICE_DATABASE_URL }}
 
       - name: Build job-service Lambda
         run: pnpm --filter job-service build:lambda
