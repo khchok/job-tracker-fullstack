@@ -2,14 +2,19 @@ import awsLambdaFastify from "@fastify/aws-lambda";
 import cookie from "@fastify/cookie";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
+import * as Sentry from "@sentry/node";
 import Fastify from "fastify";
 import { options } from "./app";
+import { instrument } from "./instrument";
 import dbPlugin from "./plugins/db";
 import jwtPlugin from "./plugins/jwt";
 import internalRoutes from "./routes/internal";
 import usersRoutes from "./routes/users";
+instrument();
+
 
 const server = Fastify(options);
+Sentry.setupFastifyErrorHandler(server);
 
 server.register(swagger, {
   openapi: {
