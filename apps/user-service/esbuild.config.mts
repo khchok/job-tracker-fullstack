@@ -6,6 +6,9 @@ await build({
   bundle: true,
   platform: "node",
   target: "node20",
-  outfile: "dist/lambda.js",
+  // ESM output so import.meta.url works correctly in Prisma 7 generated client.
+  // Lambda Node.js 20 loads .mjs files as ES modules natively.
+  format: "esm",
+  outfile: "dist/lambda.mjs",
   external: ["pg-native"],
 });
