@@ -10,5 +10,18 @@ await build({
   // Lambda Node.js 20 loads .mjs files as ES modules natively.
   format: "esm",
   outfile: "dist/lambda.mjs",
-  external: ["pg-native", "@sentry/node"],
+  external: ["pg-native"],
+  plugins: [
+    {
+      name: "node-builtins",
+      setup(build) {
+        // esbuild's __require shim doesn't handle node: protocol — mark all as external
+        // so they become proper ESM imports in the bundle (e.g. @sentry/node uses node:crypto)
+        build.onResolve({ filter: /^node:/ }, (args) => ({
+          path: args.path,
+          external: true,
+        }));
+      },
+    },
+  ],
 });
