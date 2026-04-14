@@ -18,7 +18,7 @@ export async function validateSession(jti: string): Promise<boolean> {
     throw new Error(`Invalid jti format: ${jti}`);
   }
 
-  const url = `${baseUrl}/internal/sessions/${jti}`;
+  const url = `${baseUrl.replace(/\/$/, "")}/internal/sessions/${jti}`;
   const response = await fetch(url, {
     headers: {
       "x-internal-secret": secret,

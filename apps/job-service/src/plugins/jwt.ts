@@ -1,4 +1,5 @@
 import jwt from "@fastify/jwt";
+import * as Sentry from "@sentry/node";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 import { JwtPayload } from "shared-types";
@@ -32,7 +33,8 @@ async function jwtPlugin(fastify: FastifyInstance) {
         if (!valid) {
           return reply.status(401).send({ error: "Invalid session" });
         }
-      } catch {
+      } catch(err) {
+        Sentry.captureException(err);
         return reply
           .status(503)
           .send({ error: "Authentication service unavailable" });
