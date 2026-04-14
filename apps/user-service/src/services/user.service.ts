@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "../generated/prisma/browser";
 import { Session } from "../generated/prisma/client";
 import * as sessionRepository from "../repositories/session.repository";

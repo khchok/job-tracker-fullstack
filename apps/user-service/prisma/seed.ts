@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
 
 const pool = new PrismaPg({ connectionString: process.env.USER_SERVICE_DATABASE_URL! });
