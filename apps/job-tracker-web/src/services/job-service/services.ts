@@ -2,7 +2,7 @@ import { Job, JobDetail } from "shared-types";
 import request from "../request";
 
 export const apiGetJobs = async (): Promise<Job[]> => {
-  const response = await request.get("/api/job/jobs");
+  const response = await request.get("/api/job/jobs/get-jobs");
   return response.data;
 };
 

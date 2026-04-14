@@ -32,7 +32,7 @@ export class JobTrackerStack extends cdk.Stack {
         SENTRY_DSN: process.env.SENTRY_DSN!,
       },
       timeout: cdk.Duration.seconds(30),
-      memorySize: 256,
+      memorySize: 512,
     });
 
     const jobServiceFn = new lambda.Function(this, "JobServiceFn", {
@@ -50,7 +50,7 @@ export class JobTrackerStack extends cdk.Stack {
         SENTRY_DSN: process.env.SENTRY_DSN!,
       },
       timeout: cdk.Duration.seconds(30),
-      memorySize: 256,
+      memorySize: 512,
     });
 
     const userIntegration = new apigatewayv2integrations.HttpLambdaIntegration(
