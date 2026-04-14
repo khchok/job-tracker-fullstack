@@ -7,7 +7,7 @@ export default async function (fastify: FastifyInstance) {
     return { message: "pong" };
   });
 
-  fastify.get("/", async (_request, reply) => {
+  fastify.get("/get-users", async (_request, reply) => {
     const users = await fastify.prisma.user.findMany();
     return users;
   });

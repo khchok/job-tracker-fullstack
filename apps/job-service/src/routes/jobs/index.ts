@@ -40,7 +40,7 @@ export default async function (fastify: FastifyInstance) {
   });
 
   fastify.get(
-    "/",
+    "/get-jobs",
     {
       schema: {
         description: "Returns all jobs",
@@ -79,7 +79,7 @@ export default async function (fastify: FastifyInstance) {
   );
 
   fastify.post(
-    "/",
+    "/create-job",
     {
       schema: {
         description: "Creates a new job with status NEW",
