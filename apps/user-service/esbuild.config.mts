@@ -10,5 +10,5 @@ await build({
   // Lambda Node.js 20 loads .mjs files as ES modules natively.
   format: "esm",
   outfile: "dist/lambda.mjs",
-  external: ["pg-native"],
+  external: ["pg-native", "@sentry/node"],
 });
