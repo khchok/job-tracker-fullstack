@@ -2,7 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcrypt";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
 
-const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const pool = new PrismaPg({ connectionString: process.env.USER_SERVICE_DATABASE_URL! });
 const prisma = new PrismaClient({ adapter: pool });
 
 const userData: Pick<Prisma.UserCreateInput, "name" | "email">[] = [

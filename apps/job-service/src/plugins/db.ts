@@ -6,7 +6,7 @@ import { PrismaClient } from "../generated/prisma/client";
 const prismaPlugin = async (fastify: FastifyInstance) => {
   const prisma = new PrismaClient({
     adapter: new PrismaPg({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: process.env.JOB_SERVICE_DATABASE_URL,
     }),
   });
   await prisma.$connect();

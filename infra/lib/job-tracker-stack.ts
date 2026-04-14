@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigatewayv2 from "aws-cdk-lib/aws-apigatewayv2";
 import * as apigatewayv2integrations from "aws-cdk-lib/aws-apigatewayv2-integrations";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 import * as path from "path";
 
@@ -28,7 +28,7 @@ export class JobTrackerStack extends cdk.Stack {
         NODE_ENV: "production",
         JWT_PUBLIC_KEY: process.env.JWT_PUBLIC_KEY!,
         INTERNAL_SERVICE_SECRET: process.env.INTERNAL_SERVICE_SECRET!,
-        DATABASE_URL: process.env.USER_SERVICE_DATABASE_URL!,
+        USER_SERVICE_DATABASE_URL: process.env.USER_SERVICE_DATABASE_URL!,
       },
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
@@ -44,7 +44,7 @@ export class JobTrackerStack extends cdk.Stack {
         NODE_ENV: "production",
         JWT_PUBLIC_KEY: process.env.JWT_PUBLIC_KEY!,
         INTERNAL_SERVICE_SECRET: process.env.INTERNAL_SERVICE_SECRET!,
-        DATABASE_URL: process.env.JOB_SERVICE_DATABASE_URL!,
+        JOB_SERVICE_DATABASE_URL: process.env.JOB_SERVICE_DATABASE_URL!,
         USER_SERVICE_URL: httpApi.url!,
       },
       timeout: cdk.Duration.seconds(30),
