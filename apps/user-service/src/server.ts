@@ -19,6 +19,7 @@ Sentry.setupFastifyErrorHandler(server);
 // Register the app as a plugin
 server.register(app);
 
+// NOTE: Test error endpoint for Sentry
 server.get("/debug-sentry", (req, res) => {
   Sentry.logger.info("User triggered test error", {
     action: "test_error_endpoint",
@@ -30,6 +31,7 @@ server.get("/debug-sentry", (req, res) => {
 const PORT = parseInt(process.env.FASTIFY_PORT ?? "3031") || 3031;
 server.listen({ port: PORT, host: "0.0.0.0" }, (err) => {
   if (err) {
+    Sentry.captureException(err);
     server.log.error({ err }, "Server shutdown due to an error");
     process.exit(1);
   }

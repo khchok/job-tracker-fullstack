@@ -31,6 +31,7 @@ server.get("/debug-sentry", (req, res) => {
 
 server.listen({ port: PORT, host: "0.0.0.0" }, (err) => {
   if (err) {
+    Sentry.captureException(err);
     server.log.error({ err }, "Server shutdown due to an error");
     process.exit(1);
   }
