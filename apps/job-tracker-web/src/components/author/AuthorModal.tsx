@@ -1,11 +1,7 @@
-"use client";
+'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import Image from "next/image";
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import Image from 'next/image';
 
 interface AuthorModalProps {
   open: boolean;
@@ -15,10 +11,7 @@ interface AuthorModalProps {
 export default function AuthorModal({ open, onOpenChange }: AuthorModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton
-        className="p-0 overflow-hidden gap-0 max-w-sm sm:max-w-md"
-      >
+      <DialogContent showCloseButton className="p-0 overflow-hidden gap-0 max-w-sm sm:max-w-md">
         <DialogTitle className="sr-only">About the Author</DialogTitle>
         <div className="flex">
           {/* Left accent panel */}
@@ -32,18 +25,14 @@ export default function AuthorModal({ open, onOpenChange }: AuthorModalProps) {
                 className="object-cover w-full h-full"
               />
             </div>
-            <div className="text-white text-sm font-semibold text-center leading-tight">
-              Chok Khar Hui
-            </div>
-            <div className="text-white/70 text-xs text-center">
-              Software Engineer
-            </div>
+            <div className="text-white text-sm font-semibold text-center leading-tight">Chok Khar Hui</div>
+            <div className="text-white/70 text-xs text-center">Software Engineer</div>
           </div>
 
           {/* Right content */}
           <div className="px-5 py-6 flex flex-col gap-4 flex-1">
             <p className="text-sm text-gray-500 leading-relaxed">
-              A personal job tracker — built to learn, shared to inspire.
+              A job tracker for recruiters — built to learn, shared to inspire.
             </p>
             <div className="flex flex-col gap-3">
               <a
