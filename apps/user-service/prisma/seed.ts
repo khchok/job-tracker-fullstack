@@ -1,23 +1,23 @@
-import { PrismaPg } from "@prisma/adapter-pg";
-import bcrypt from "bcryptjs";
-import { Prisma, PrismaClient } from "../src/generated/prisma/client";
+import { PrismaPg } from '@prisma/adapter-pg';
+import bcrypt from 'bcryptjs';
+import { Prisma, PrismaClient } from '../src/generated/prisma/client';
 
 const pool = new PrismaPg({ connectionString: process.env.USER_SERVICE_DATABASE_URL! });
 const prisma = new PrismaClient({ adapter: pool });
 
-const userData: Pick<Prisma.UserCreateInput, "name" | "email">[] = [
+const userData: Pick<Prisma.UserCreateInput, 'name' | 'email'>[] = [
   {
-    name: "Alice",
-    email: "alice@job-tracker.com",
+    name: 'Alice',
+    email: 'alice@job-tracker.com'
   },
   {
-    name: "Bob",
-    email: "bob@job-tracker.com",
+    name: 'Bob',
+    email: 'bob@job-tracker.com'
   },
   {
-    name: "Charlie",
-    email: "charlie@job-tracker.com",
-  },
+    name: 'Charlie',
+    email: 'charlie@job-tracker.com'
+  }
 ];
 
 async function main() {
@@ -27,9 +27,9 @@ async function main() {
   await prisma.user.deleteMany();
 
   for (const u of userData) {
-    const pwHash = await bcrypt.hash("password", 10);
+    const pwHash = await bcrypt.hash('P@ssword123', 10);
     const user = await prisma.user.create({
-      data: { ...u, passwordHash: pwHash },
+      data: { ...u, passwordHash: pwHash }
     });
     console.log(`Created user with id: ${user.id}`);
   }
