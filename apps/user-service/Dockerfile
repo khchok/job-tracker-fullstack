@@ -17,7 +17,9 @@ RUN pnpm install --frozen-lockfile
 
 # Build shared libraries first, then the service
 RUN pnpm --filter shared-types build
-RUN pnpm --filter user-service db:generate
+# prisma generate only reads the schema file — no real DB connection is made.
+# A dummy URL satisfies the env var requirement without exposing secrets.
+RUN DATABASE_URL="postgresql://placeholder@localhost/placeholder" pnpm --filter user-service db:generate
 RUN pnpm --filter user-service build
 
 WORKDIR /app/apps/user-service
