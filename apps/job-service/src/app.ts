@@ -11,6 +11,7 @@ import path from "path";
 
 // Fastify server options
 export const options: FastifyServerOptions = {
+  pluginTimeout: 30000,
   logger: {
     level: process.env.LOG_LEVEL || "debug",
     transport:
