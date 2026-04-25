@@ -1,40 +1,34 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useCreateJobMutation } from "@/services/job-service/mutations";
-import { useState } from "react";
-import { toast } from "sonner";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useCreateJobMutation } from '@/services/job-service/mutations';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function AddJobModal() {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [remarks, setRemarks] = useState("");
+  const [name, setName] = useState('');
+  const [remarks, setRemarks] = useState('');
 
   const { createJobMutation, isPending } = useCreateJobMutation();
 
   function handleSubmit() {
     createJobMutation({ name, remarks })
       .then(() => {
-        toast.success("Job added");
+        toast.success('Job added');
         setOpen(false);
-        setName("");
-        setRemarks("");
+        setName('');
+        setRemarks('');
       })
-      .catch(() => toast.error("Failed to add job"));
+      .catch(() => toast.error('Failed to add job'));
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button />}>+ Add Job</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-white w-full max-w-md">
         <DialogHeader>
           <DialogTitle>Add Job Application</DialogTitle>
         </DialogHeader>
@@ -61,11 +55,8 @@ export default function AddJobModal() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={!name.trim() || isPending}
-            >
-              {isPending ? "Adding..." : "Add Job"}
+            <Button onClick={handleSubmit} disabled={!name.trim() || isPending}>
+              {isPending ? 'Adding...' : 'Add Job'}
             </Button>
           </div>
         </div>

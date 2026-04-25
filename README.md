@@ -6,6 +6,8 @@
 
 A full-stack recruiter-facing job application tracker. Recruiters can manage applicants across a Kanban pipeline, track status history as a timeline, and collaborate through a clean drag-and-drop interface.
 
+**Live demo:** https://khchok.xyz
+
 ---
 
 ## Tech Stack
@@ -94,7 +96,7 @@ job-tracker-fullstack/
 │   │       ├── plugins/             # Fastify plugins (Prisma)
 │   │       ├── repositories/        # Database access layer
 │   │       ├── routes/
-│   │       │   └── users/           # POST /users/auth, POST /users/auth/logout, GET /users/me
+│   │       │   └── users/           # POST /users/auth, POST /users/auth/logout, GET /users/auth/me
 │   │       └── services/            # Business logic (bcrypt password verification)
 │   │
 │   └── job-tracker-web/             # Next.js 16 frontend
@@ -122,6 +124,12 @@ job-tracker-fullstack/
 ├── pnpm-workspace.yaml              # Workspace: apps/*, libraries/*
 └── package.json                     # Root scripts for dev, db, and build
 ```
+
+---
+
+## Infrastructure
+
+Originally deployed on **AWS** (API Gateway HTTP API + Lambda + CDK) — the `infra/` directory contains the CDK stack. Due to budget constraints, the live demo was migrated to **[Northflank](https://northflank.com)**, which runs the containerised services and PostgreSQL databases.
 
 ---
 
@@ -208,8 +216,8 @@ pnpm dev:frontend       # http://localhost:3000
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/jobs` | List all jobs with latest status |
-| `POST` | `/jobs` | Create a job |
+| `GET` | `/jobs/get-jobs` | List all jobs with latest status |
+| `POST` | `/jobs/create-job` | Create a job |
 | `GET` | `/jobs/:id` | Get job with full status timeline |
 | `PUT` | `/jobs/:id` | Update job (name, status, remarks) |
 | `DELETE` | `/jobs/:id` | Delete a job |
@@ -221,6 +229,6 @@ pnpm dev:frontend       # http://localhost:3000
 |--------|------|-------------|
 | `POST` | `/users/auth` | Sign in — sets httpOnly JWT cookie |
 | `POST` | `/users/auth/logout` | Sign out — revokes JTI, clears cookie |
-| `GET` | `/users/me` | Get current authenticated user |
+| `GET` | `/users/auth/me` | Get current authenticated user |
 
 Interactive Swagger docs are available at `http://localhost:<port>/docs` for both services.
